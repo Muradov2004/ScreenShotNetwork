@@ -18,6 +18,7 @@ using System.Runtime.InteropServices;
 using System.IO;
 using System.Drawing;
 using System.Net.Sockets;
+using System.Net;
 
 namespace ScreenShotNetwork;
 
@@ -31,18 +32,33 @@ public partial class MainWindow : Window
     SocketType.Dgram,
     ProtocolType.Udp
     );
+    IPAddress ip = IPAddress.Parse("127.0.0.1");
 
+    IPEndPoint connectEP;
+
+    EndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
     public MainWindow()
     {
         InitializeComponent();
+        connectEP = new IPEndPoint(ip, 27001);
     }
 
     private void Button_Click(object sender, RoutedEventArgs e)
     {
-        var message = "capture screenshot";
 
+        var sendingBytes = Encoding.Default.GetBytes("capture screenshot");
 
+        client.SendTo(sendingBytes, connectEP);
+
+        var recievingBytes = new byte[ushort.MaxValue];
+        var len = client.ReceiveFrom(recievingBytes, ref endPoint);
     }
-    
 
+    private Bitmap ByteArrayToBitmap(byte[] byteArray)
+    {
+        using (MemoryStream ms = new MemoryStream(byteArray))
+        {
+            return new Bitmap(ms);
+        }
+    }
 }

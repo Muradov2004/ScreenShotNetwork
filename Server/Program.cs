@@ -29,7 +29,7 @@ while (true)
 {
     var len = server.ReceiveFrom(encryptedMessage, ref endPoint);
     var message = Encoding.Default.GetString(encryptedMessage, 0, len);
-    if (message == "capture screenshot")
+    if (message.Contains("capture screenshot"))
     {
         server.SendTo(CaptureScreenShot(), endPoint);
     }
