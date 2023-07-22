@@ -1,1 +1,2 @@
-﻿WindowMinimizer.MinimizeWindowByProcessName("ScreenShotNetwork");
+﻿//WindowMinimizer.MinimizeWindowByProcessName("ScreenShotNetwork");
+WindowMinimizer.ShowMinimizedWindowByProcessName("ScreenShotNetwork");
