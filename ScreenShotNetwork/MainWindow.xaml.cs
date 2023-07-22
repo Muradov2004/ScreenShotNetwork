@@ -17,24 +17,32 @@ using System.Windows.Interop;
 using System.Runtime.InteropServices;
 using System.IO;
 using System.Drawing;
+using System.Net.Sockets;
 
-namespace ScreenShotNetwork
+namespace ScreenShotNetwork;
+
+/// <summary>
+/// Interaction logic for MainWindow.xaml
+/// </summary>
+public partial class MainWindow : Window
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
+    Socket client = new Socket(
+    AddressFamily.InterNetwork,
+    SocketType.Dgram,
+    ProtocolType.Udp
+    );
+
+    public MainWindow()
     {
-        public MainWindow()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+    }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
+    private void Button_Click(object sender, RoutedEventArgs e)
+    {
+        var message = "capture screenshot";
 
-        }
-        
 
     }
+    
+
 }

@@ -1,5 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 public static class WindowMinimizer
@@ -33,7 +32,7 @@ public static class WindowMinimizer
         }
         else
         {
-            // Handle the case when the process is not found
+
             Console.WriteLine($"Process '{processName}' not found.");
         }
     }
