@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿// See https://aka.ms/new-console-template for more information
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 public static class WindowMinimizer

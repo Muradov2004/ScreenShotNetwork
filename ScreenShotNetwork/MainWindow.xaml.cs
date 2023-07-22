@@ -17,7 +17,6 @@ using System.Windows.Interop;
 using System.Runtime.InteropServices;
 using System.IO;
 using System.Drawing;
-using System.Windows.Forms;
 
 namespace ScreenShotNetwork
 {
@@ -33,47 +32,9 @@ namespace ScreenShotNetwork
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            CaptureScreenshot();
+
         }
+        
 
-        private void CaptureScreenshot()
-        {
-            try
-            {
-                System.Drawing.Rectangle screenBounds = Screen.PrimaryScreen.Bounds;
-
-                using (Bitmap bitmap = new Bitmap((int)screenBounds.Width, (int)screenBounds.Height))
-                {
-                    using (Graphics graphics = Graphics.FromImage(bitmap))
-                    {
-                        graphics.CopyFromScreen((int)screenBounds.Left, (int)screenBounds.Top, 0, 0, bitmap.Size);
-                    }
-                    BitmapImage bitmapImage = ConvertBitmapToBitmapImage(bitmap);
-
-                    ImageBox.Source = bitmapImage;
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Windows.MessageBox.Show($"Error capturing screenshot: {ex.Message}");
-            }
-        }
-
-        private BitmapImage ConvertBitmapToBitmapImage(System.Drawing.Bitmap bitmap)
-        {
-            using (MemoryStream memory = new MemoryStream())
-            {
-                bitmap.Save(memory, ImageFormat.Png);
-                memory.Position = 0;
-
-                BitmapImage bitmapImage = new BitmapImage();
-                bitmapImage.BeginInit();
-                bitmapImage.StreamSource = memory;
-                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
-                bitmapImage.EndInit();
-                bitmapImage.Freeze();
-                return bitmapImage;
-            }
-        }
     }
 }
