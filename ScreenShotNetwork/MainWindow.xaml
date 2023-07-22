@@ -17,7 +17,7 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Button Content="Start" FontSize="20" Height="40" Width="100"/>
+            <Button Content="Screen Shot" FontSize="20" Height="40" Width="150"/>
             <Button Content="Save Image" Grid.Column="1" FontSize="20" Height="40" Width="150"/>
         </Grid>
     </Grid>
