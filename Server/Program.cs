@@ -25,15 +25,31 @@ var encryptedMessage = new byte[ushort.MaxValue];
 
 EndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
 
-while (true)
+
+var len = server.ReceiveFrom(encryptedMessage, ref endPoint);
+var message = Encoding.Default.GetString(encryptedMessage, 0, len);
+Console.WriteLine(message);
+if (message.Contains("capture screenshot"))
 {
-    var len = server.ReceiveFrom(encryptedMessage, ref endPoint);
-    var message = Encoding.Default.GetString(encryptedMessage, 0, len);
-    if (message.Contains("capture screenshot"))
+    var ImageBytes = CaptureScreenShot();
+    int arrayCount = (int)Math.Ceiling((double)ImageBytes.Length / 500);
+
+    byte[][] bytes = new byte[arrayCount][];
+    for (int i = 0; i < arrayCount; i++)
     {
-        server.SendTo(CaptureScreenShot(), endPoint);
+        int remainingElements = ImageBytes.Length - i * 500;
+        int currentArraySize = Math.Min(500, remainingElements);
+        bytes[i] = new byte[currentArraySize];
+        Array.Copy(ImageBytes, i * 500, bytes[i], 0, currentArraySize);
     }
+
+    for (int i = 0; i < bytes.Length; i++)
+        server.SendTo(bytes[i], endPoint);
+
+
+
 }
+
 
 byte[] CaptureScreenShot()
 {

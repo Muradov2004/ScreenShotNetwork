@@ -50,8 +50,49 @@ public partial class MainWindow : Window
 
         client.SendTo(sendingBytes, connectEP);
 
-        var recievingBytes = new byte[ushort.MaxValue];
-        var len = client.ReceiveFrom(recievingBytes, ref endPoint);
+
+        Task.Run(() =>
+        {
+            List<byte> receivedBytes = new List<byte>();
+            int bytesReceived = 0;
+            bool isEndOfMessage = false;
+
+            while (!isEndOfMessage)
+            {
+                byte[] buffer = new byte[500];
+
+                try
+                {
+                    bytesReceived = client.ReceiveFrom(buffer, ref endPoint);
+                }
+                catch (SocketException ex)
+                {
+                    Console.WriteLine($"Error receiving data: {ex.Message}");
+                    break;
+                }
+
+                if (bytesReceived > 0)
+                {
+                    receivedBytes.AddRange(buffer.Take(bytesReceived));
+
+                    if (bytesReceived < 500)
+                        isEndOfMessage = true;
+                }
+            }
+
+            Bitmap bitmap = ByteArrayToBitmap(receivedBytes.ToArray());
+            BitmapSource bitmapSource = Imaging.CreateBitmapSourceFromHBitmap(
+                bitmap.GetHbitmap(),
+                IntPtr.Zero,
+                Int32Rect.Empty,
+                BitmapSizeOptions.FromEmptyOptions()
+            );
+            Dispatcher.Invoke(() =>
+            {
+                ImageBox.Source = bitmapSource;
+            });
+        });
+
     }
 
     private Bitmap ByteArrayToBitmap(byte[] byteArray)
