@@ -50,7 +50,6 @@ public partial class MainWindow : Window
 
         client.SendTo(sendingBytes, connectEP);
 
-
         Task.Run(() =>
         {
             List<byte> receivedBytes = new List<byte>();

