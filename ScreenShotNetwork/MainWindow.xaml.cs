@@ -41,6 +41,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         connectEP = new IPEndPoint(ip, 27001);
+        DataContext = this;
     }
 
     private void Button_Click(object sender, RoutedEventArgs e)
@@ -80,18 +81,62 @@ public partial class MainWindow : Window
             }
 
             Bitmap bitmap = ByteArrayToBitmap(receivedBytes.ToArray());
-            BitmapSource bitmapSource = Imaging.CreateBitmapSourceFromHBitmap(
-                bitmap.GetHbitmap(),
-                IntPtr.Zero,
-                Int32Rect.Empty,
-                BitmapSizeOptions.FromEmptyOptions()
-            );
+            //BitmapSource bitmapSource = Imaging.CreateBitmapSourceFromHBitmap(
+            //    bitmap.GetHbitmap(),
+            //    IntPtr.Zero,
+            //    Int32Rect.Empty,
+            //    BitmapSizeOptions.FromEmptyOptions()
+            //);
             Dispatcher.Invoke(() =>
             {
-                ImageBox.Source = bitmapSource;
+                BitmapImage bitmapImage = ByteArrayToImageSource(receivedBytes.ToArray());
+                ImageBox.Source = bitmapImage;
             });
         });
 
+    }
+
+    private BitmapImage ByteArrayToImageSource(byte[] byteArray)
+    {
+        try
+        {
+            MemoryStream ms = new MemoryStream(byteArray);
+            BitmapImage image = new BitmapImage();
+            image.BeginInit();
+            image.StreamSource = ms;
+            image.CacheOption = BitmapCacheOption.OnLoad;
+            image.EndInit();
+            return image;
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error converting Bitmap to BitmapImage: {ex.Message}");
+            return null!;
+        }
+    }
+
+
+    private BitmapImage BitmapToImageSource(Bitmap bitmap)
+    {
+        using (MemoryStream memory = new MemoryStream())
+        {
+            try
+            {
+                bitmap.Save(memory, ImageFormat.Bmp);
+                BitmapImage bitmapimage = new BitmapImage();
+                bitmapimage.BeginInit();
+                bitmapimage.StreamSource = memory;
+                bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapimage.EndInit();
+
+                return bitmapimage;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error converting Bitmap to BitmapImage: {ex.Message}");
+                return null!;
+            }
+        }
     }
 
     private Bitmap ByteArrayToBitmap(byte[] byteArray)
