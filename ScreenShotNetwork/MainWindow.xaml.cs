@@ -19,6 +19,7 @@ using System.IO;
 using System.Drawing;
 using System.Net.Sockets;
 using System.Net;
+using Microsoft.Win32;
 
 namespace ScreenShotNetwork;
 
@@ -27,25 +28,27 @@ namespace ScreenShotNetwork;
 /// </summary>
 public partial class MainWindow : Window
 {
-    Socket client = new Socket(
-    AddressFamily.InterNetwork,
-    SocketType.Dgram,
-    ProtocolType.Udp
-    );
-    IPAddress ip = IPAddress.Parse("127.0.0.1");
+    List<byte> imageBytes = new();
 
-    IPEndPoint connectEP;
-
-    EndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
     public MainWindow()
     {
         InitializeComponent();
-        connectEP = new IPEndPoint(ip, 27001);
-        DataContext = this;
     }
 
-    private void Button_Click(object sender, RoutedEventArgs e)
+    private void ScreenShot_Click(object sender, RoutedEventArgs e)
     {
+        List<byte> receivedBytes = new List<byte>();
+
+        var client = new Socket(
+                                    AddressFamily.InterNetwork,
+                                    SocketType.Dgram,
+                                    ProtocolType.Udp
+                                );
+        var ip = IPAddress.Parse("127.0.0.1");
+
+        var connectEP = new IPEndPoint(ip, 27001);
+
+        EndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
 
         var sendingBytes = Encoding.Default.GetBytes("capture screenshot");
 
@@ -53,7 +56,6 @@ public partial class MainWindow : Window
 
         Task.Run(() =>
         {
-            List<byte> receivedBytes = new List<byte>();
             int bytesReceived = 0;
             bool isEndOfMessage = false;
 
@@ -84,9 +86,11 @@ public partial class MainWindow : Window
             {
                 BitmapImage bitmapImage = ByteArrayToImageSource(receivedBytes.ToArray());
                 ImageBox.Source = bitmapImage;
+                imageBytes.Clear();
+                imageBytes.AddRange(receivedBytes);
             });
         });
-
+        SaveBtn.IsEnabled = true;
     }
 
     private BitmapImage ByteArrayToImageSource(byte[] byteArray)
@@ -108,5 +112,18 @@ public partial class MainWindow : Window
                 return null!;
             }
         }
+    }
+
+    private void SaveBtn_Click(object sender, RoutedEventArgs e)
+    {
+        SaveFileDialog dialog = new SaveFileDialog();
+        dialog.FileName = "image";
+        dialog.Filter = "PNG Files(*.png) | *.png|JPEG Files(*.jpeg) | *.jpeg";
+
+        if (dialog.ShowDialog() == true)
+            File.WriteAllBytes(dialog.FileName, imageBytes.ToArray());
+
+        SaveBtn.IsEnabled = false;
+        ImageBox.Source = null;
     }
 }

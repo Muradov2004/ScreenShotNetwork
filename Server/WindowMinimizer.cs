@@ -48,7 +48,6 @@ public static class WindowMinimizer
         }
         else
         {
-            // Handle the case when the process is not found
             Console.WriteLine($"Process '{processName}' not found.");
         }
     }

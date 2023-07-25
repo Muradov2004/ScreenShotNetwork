@@ -68,6 +68,9 @@ byte[] CaptureScreenShot()
         {
             using (Graphics graphics = Graphics.FromImage(bitmap))
             {
+                graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
                 graphics.CopyFromScreen(0, 0, 0, 0, bitmap.Size);
             }
             return BitmapToByteArray(bitmap);

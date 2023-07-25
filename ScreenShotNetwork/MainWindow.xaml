@@ -17,8 +17,8 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Button Content="Screen Shot" FontSize="20" Height="40" Width="150" Click="Button_Click"/>
-            <Button Content="Save Image" Grid.Column="1" FontSize="20" Height="40" Width="150"/>
+            <Button Content="Screen Shot" FontSize="20" Height="40" Width="150" Click="ScreenShot_Click"/>
+            <Button x:Name="SaveBtn" Content="Save Image" IsEnabled="False" Grid.Column="1" FontSize="20" Height="40" Width="150" Click="SaveBtn_Click"/>
         </Grid>
     </Grid>
 </Window>
