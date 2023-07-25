@@ -80,13 +80,6 @@ public partial class MainWindow : Window
                 }
             }
 
-            Bitmap bitmap = ByteArrayToBitmap(receivedBytes.ToArray());
-            //BitmapSource bitmapSource = Imaging.CreateBitmapSourceFromHBitmap(
-            //    bitmap.GetHbitmap(),
-            //    IntPtr.Zero,
-            //    Int32Rect.Empty,
-            //    BitmapSizeOptions.FromEmptyOptions()
-            //);
             Dispatcher.Invoke(() =>
             {
                 BitmapImage bitmapImage = ByteArrayToImageSource(receivedBytes.ToArray());
@@ -98,52 +91,22 @@ public partial class MainWindow : Window
 
     private BitmapImage ByteArrayToImageSource(byte[] byteArray)
     {
-        try
-        {
-            MemoryStream ms = new MemoryStream(byteArray);
-            BitmapImage image = new BitmapImage();
-            image.BeginInit();
-            image.StreamSource = ms;
-            image.CacheOption = BitmapCacheOption.OnLoad;
-            image.EndInit();
-            return image;
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show($"Error converting Bitmap to BitmapImage: {ex.Message}");
-            return null!;
-        }
-    }
-
-
-    private BitmapImage BitmapToImageSource(Bitmap bitmap)
-    {
-        using (MemoryStream memory = new MemoryStream())
+        using (MemoryStream ms = new MemoryStream(byteArray))
         {
             try
             {
-                bitmap.Save(memory, ImageFormat.Bmp);
-                BitmapImage bitmapimage = new BitmapImage();
-                bitmapimage.BeginInit();
-                bitmapimage.StreamSource = memory;
-                bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
-                bitmapimage.EndInit();
-
-                return bitmapimage;
+                BitmapImage image = new BitmapImage();
+                image.BeginInit();
+                image.StreamSource = ms;
+                image.CacheOption = BitmapCacheOption.OnLoad;
+                image.EndInit();
+                return image;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error converting Bitmap to BitmapImage: {ex.Message}");
+                MessageBox.Show($"Error converting Bytes to BitmapImage: {ex.Message}");
                 return null!;
             }
-        }
-    }
-
-    private Bitmap ByteArrayToBitmap(byte[] byteArray)
-    {
-        using (MemoryStream ms = new MemoryStream(byteArray))
-        {
-            return new Bitmap(ms);
         }
     }
 }

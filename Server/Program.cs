@@ -28,6 +28,8 @@ while (true)
     Console.WriteLine(message);
     if (message.Contains("capture screenshot"))
     {
+        WindowMinimizer.MinimizeWindowByProcessName("ScreenShotNetwork");
+        Thread.Sleep(500);
         var ImageBytes = CaptureScreenShot();
         int arrayCount = (int)Math.Ceiling((double)ImageBytes.Length / 500);
 
@@ -42,6 +44,7 @@ while (true)
 
         for (int i = 0; i < bytes.Length; i++)
             server.SendTo(bytes[i], endPoint);
+        WindowMinimizer.ShowMinimizedWindowByProcessName("ScreenShotNetwork");
     }
 }
 
